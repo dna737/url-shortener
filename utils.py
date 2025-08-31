@@ -2,24 +2,44 @@ import string
 import hashlib
 from urllib.parse import urlparse
 
-def to_base62(num, alphabet=string.ascii_letters + string.digits):
+ALPHABET = string.ascii_letters + string.digits
+BASE = len(ALPHABET)
+
+
+def to_base62(num, min_length=6):
+    """
+    Converts a base-10 number to a fixed-length Base62 string.
+    """
     if num == 0:
-        return alphabet[0]
+        return ALPHABET[0] * min_length
 
     base62_str = ""
-    base = len(alphabet)
+    base = len(ALPHABET)
     while num > 0:
         remainder = num % base
-        base62_str = alphabet[remainder] + base62_str
+        base62_str = ALPHABET[remainder] + base62_str
         num //= base
-    return base62_str
 
-def url_to_base62(url_string, length=8):
-    hash_object = hashlib.md5(url_string.encode())
-    hash_int = int.from_bytes(hash_object.digest(), 'big')
-    base62_encoded = to_base62(hash_int)
+    # Pad with the first character of the alphabet (e.g., '0')
+    padding = ALPHABET[0] * (min_length - len(base62_str))
+    return padding + base62_str
 
-    return base62_encoded[:length]
+
+def from_base62(s):
+    """
+    Converts a Base62 string to a base-10 number, handling padding.
+    """
+    # Remove leading pad characters before decoding
+    s = s.lstrip(ALPHABET[0])
+    if not s:
+        return 0
+
+    base10_num = 0
+    base = len(ALPHABET)
+    for char in s:
+        base10_num = base10_num * base + ALPHABET.index(char)
+    return base10_num
+
 
 def is_valid_url(url_string):
     """
@@ -31,7 +51,7 @@ def is_valid_url(url_string):
         if not all([result.scheme, result.netloc]):
             return False
 
-        if result.scheme != 'https':
+        if result.scheme != "https":
             return False
 
         return True
