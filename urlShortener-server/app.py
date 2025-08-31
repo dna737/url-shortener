@@ -13,7 +13,7 @@ def hello_world():
 
 
 @app.route("/shorten", methods=["POST"])
-def submit_url():
+def shorten_url():
     original_url = (
         request.json.get("original_url")
         if request.is_json
