@@ -1,20 +1,27 @@
 import type { UrlRequest } from ".";
 
+const BASE_URL = "";
+
 const requests = {
   shorten: "/api/shorten",
   redirect: "/api/",
 };
 
 export const get = async (url: string) => {
-  const response = await fetch(url);
+  const response = await fetch(BASE_URL + url);
   return response.json();
 };
 
 export const post = async (url: string, data: UrlRequest) => {
-  const response = await fetch(url, {
+  const response = await fetch(BASE_URL + url, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(data),
   });
+
+  console.log("response: ", response);
   return response.json();
 };
 

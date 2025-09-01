@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, jsonify
 from utils import is_valid_url, to_base62, from_base62
 from db import init_db, get_or_create_url_id, get_original_url
 
@@ -7,12 +7,7 @@ app = Flask(__name__)
 init_db()
 
 
-@app.route("/")
-def hello_world():
-    return f"<p>Hello World</p>"
-
-
-@app.route("/shorten", methods=["POST"])
+@app.route("/api/shorten", methods=["POST"])
 def shorten_url():
     original_url = (
         request.json.get("original_url")
@@ -24,11 +19,17 @@ def shorten_url():
         print(f"URL ID: {url_id}", "type: ", type(url_id))
         base62_url_id = to_base62(url_id)
         print(f"Base62 URL ID: {base62_url_id}")
-        return f"<p>The shortened URL is: {base62_url_id}</p>"
-    return "<p>Invalid URL</p>", 400
+        return jsonify(
+            {
+                "shortenedUrl": base62_url_id,
+                "originalUrl": original_url,
+                "success": True,
+            }
+        )
+    return jsonify({"error": "Invalid URL", "success": False}), 400
 
 
-@app.route("/<short_url>")
+@app.route("/api/<short_url>")
 def redirect_to_original_url(short_url):
     url_id = from_base62(short_url)
     original_url = get_original_url(url_id)
