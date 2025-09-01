@@ -24,9 +24,13 @@ def shorten_url():
                 "shortenedUrl": base62_url_id,
                 "originalUrl": original_url,
                 "success": True,
+                "message": "URL shortened successfully",
             }
         )
-    return jsonify({"error": "Invalid URL", "success": False}), 400
+    return (
+        jsonify({"error": "Invalid URL", "success": False, "message": "Invalid URL"}),
+        400,
+    )
 
 
 @app.route("/api/<short_url>")

@@ -1,4 +1,4 @@
-import type { UrlRequest } from ".";
+import type { UrlRequest, UrlResponse } from ".";
 
 const BASE_URL = "";
 
@@ -25,7 +25,7 @@ export const post = async (url: string, data: UrlRequest) => {
   return response.json();
 };
 
-export const shortenUrl = async (data: UrlRequest) => {
+export const shortenUrl = async (data: UrlRequest): Promise<UrlResponse> => {
   return post(requests.shorten, data);
 };
 
