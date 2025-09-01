@@ -1,58 +1,54 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { toast } from "sonner"
 import { z } from "zod"
-
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { shortenUrl } from "@/services"
+import { getPublicSuffix } from 'tldts';
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  original_url: z.string()
+  .refine((url) => {
+    const hasProtocol = url.startsWith("http://") || url.startsWith("https://");
+    const hasValidSuffix = getPublicSuffix(url) !== null;
+
+    return hasProtocol && hasValidSuffix;
+  }, {
+    error: "Invalid URL provided",
   }),
-})
+});
 
 export function InputForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
+      original_url: "",
     },
-  })
+  });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+    shortenUrl(data)
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6" autoComplete="off">
         <FormField
           control={form.control}
-          name="username"
+          name="original_url"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Original URL</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input 
+                  placeholder="Enter long URL here..." 
+                  autoComplete="url"
+                  {...field} 
+                />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                This is the URL you want to shorten.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -66,7 +62,7 @@ export function InputForm() {
 
 export default function App() {
   return (
-    <div>
+    <div className="p-5">
       <InputForm />
     </div>
   )
