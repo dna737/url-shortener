@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { shortenUrl } from "@/services"
 import { toast, Toaster } from "sonner"
 import { isDomainValid } from "@/utils"
+import { useState } from "react"
+import { Displayer } from "."
 
 const FormSchema = z.object({
   original_url: z.string({ message: "Invalid URL provided" })
@@ -18,7 +20,7 @@ const FormSchema = z.object({
     })
 });
 
-export function InputForm() {
+export function InputForm({ handleUrl }: { handleUrl: (url: string) => void }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -26,7 +28,7 @@ export function InputForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     let finalUrl = data.original_url;
 
     if (!finalUrl) return;
@@ -44,7 +46,19 @@ export function InputForm() {
       },
       duration: 2000,
     });
-    shortenUrl({ original_url: finalUrl });
+    const abridgedUrl = await shortenUrl({ original_url: finalUrl });
+    if(abridgedUrl.success) {
+      handleUrl(abridgedUrl.shortenedUrl);
+    } else {
+      toast.error("Failed to shorten URL", {
+        description: abridgedUrl.message,
+        style: {
+          backgroundColor: "#ef4444",
+          color: "white",
+          borderColor: "#dc2626"
+        }
+      });
+    }
   }
 
   function onError(errors: FieldErrors<z.infer<typeof FormSchema>>) {
@@ -94,9 +108,18 @@ export function InputForm() {
 }
 
 export default function App() {
+  const [seekInput, setSeekInput] = useState(true);
+  const [url, setUrl] = useState("");
+
+  const handleUrl = (url: string) => {
+    console.log("URL: ", url);
+    setUrl(url);
+    setSeekInput(false);
+  }
+
   return (
     <div className="p-5">
-      <InputForm />
+      {seekInput ? <InputForm handleUrl={handleUrl} /> : <Displayer url={url} />}
     </div>
   )
 }
