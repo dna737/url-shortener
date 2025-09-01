@@ -36,6 +36,12 @@ export function InputForm() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    let finalUrl = data.original_url;
+
+    // Add https:// if it doesn't exist
+    if (finalUrl && !finalUrl.startsWith("http://") && !finalUrl.startsWith("https://")) {
+      finalUrl = `https://${finalUrl}`;
+    }
     toast.success("URL submitted successfully!", {
       description: "Processing your URL...",
       style: {
@@ -45,7 +51,7 @@ export function InputForm() {
       },
       duration: 2000,
     });
-    shortenUrl(data);
+    shortenUrl({ original_url: finalUrl });
   }
 
   function onError(errors: FieldErrors<z.infer<typeof FormSchema>>) {
