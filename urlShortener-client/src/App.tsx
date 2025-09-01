@@ -7,13 +7,12 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { shortenUrl } from "@/services"
 import { toast, Toaster } from "sonner"
+import { isDomainValid } from "@/utils"
 
 const FormSchema = z.object({
   original_url: z.string({ message: "Invalid URL provided" })
     .refine((url) => {
-      // Use a more robust regex to check for a valid domain with a TLD
-      const domainRegex = /^(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/i;
-      return domainRegex.test(url);
+      return isDomainValid(url);
     }, {
       message: "URL must be a real domain (e.g., example.com)",
     })
