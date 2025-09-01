@@ -6,25 +6,17 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { shortenUrl } from "@/services"
-import { getPublicSuffix } from 'tldts';
 import { toast, Toaster } from "sonner"
 
 const FormSchema = z.object({
-  original_url: z.string()
-  .refine((url) => {
-    // Check if URL has a protocol
-    const hasProtocol = url.startsWith("http://") || url.startsWith("https://");
-    
-    // If no protocol, add https:// to check if it's a valid domain
-    const urlToCheck = hasProtocol ? url : `https://${url}`;
-    const hasValidSuffix = getPublicSuffix(urlToCheck) !== null;
-    
-    // URL is valid if it has a protocol and valid suffix, OR if it's a valid domain without protocol
-    const isValid = (hasProtocol && hasValidSuffix) || (!hasProtocol && hasValidSuffix);
-    return isValid;
-  }, {
-    error: "Invalid URL provided",
-  }),
+  original_url: z.string({ message: "Invalid URL provided" })
+    .refine((url) => {
+      // Use a more robust regex to check for a valid domain with a TLD
+      const domainRegex = /^(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/i;
+      return domainRegex.test(url);
+    }, {
+      message: "URL must be a real domain (e.g., example.com)",
+    })
 });
 
 export function InputForm() {
@@ -37,6 +29,8 @@ export function InputForm() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     let finalUrl = data.original_url;
+
+    if (!finalUrl) return;
 
     // Add https:// if it doesn't exist
     if (finalUrl && !finalUrl.startsWith("http://") && !finalUrl.startsWith("https://")) {

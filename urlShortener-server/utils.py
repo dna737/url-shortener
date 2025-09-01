@@ -1,6 +1,6 @@
 import string
-import hashlib
 from urllib.parse import urlparse
+import re
 
 ALPHABET = string.ascii_letters + string.digits
 BASE = len(ALPHABET)
@@ -43,17 +43,12 @@ def from_base62(s):
 
 def is_valid_url(url_string):
     """
-    Checks if a given string is a valid HTTPS URL.
+    Checks if a given string is a valid-looking URL or domain.
+    Accepts domains with or without protocol (http, https) and www.
     """
-    try:
-        result = urlparse(url_string)
+    domain_regex = re.compile(
+        r"^(?:https?://)?(?:www\.)?[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$",
+        re.IGNORECASE,
+    )
 
-        if not all([result.scheme, result.netloc]):
-            return False
-
-        if result.scheme != "https":
-            return False
-
-        return True
-    except ValueError:
-        return False
+    return bool(domain_regex.match(url_string))
