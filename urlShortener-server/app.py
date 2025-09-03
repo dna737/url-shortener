@@ -19,9 +19,11 @@ def shorten_url():
         print(f"URL ID: {url_id}", "type: ", type(url_id))
         base62_url_id = to_base62(url_id)
         print(f"Base62 URL ID: {base62_url_id}")
+        host = request.headers.get("X-Forwarded-Host", request.host)
+        print(f"Host: {host}")
         return jsonify(
             {
-                "shortenedUrl": base62_url_id,
+                "shortenedUrl": f"{host}/{base62_url_id}",
                 "originalUrl": original_url,
                 "success": True,
                 "message": "URL shortened successfully",
