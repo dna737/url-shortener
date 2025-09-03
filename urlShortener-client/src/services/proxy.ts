@@ -31,7 +31,6 @@ export const post = async (url: string, data: UrlRequest) => {
     body: JSON.stringify(data),
   });
 
-  console.log("response: ", response);
   return response.json();
 };
 
