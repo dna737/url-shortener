@@ -20,7 +20,7 @@ const FormSchema = z.object({
     })
 });
 
-export function InputForm({ handleUrl }: { handleUrl: (url: string) => void }) {
+export function InputForm({ handleUrl }: { handleUrl: (originalUrl: string, shortenedUrl: string) => void }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -48,7 +48,7 @@ export function InputForm({ handleUrl }: { handleUrl: (url: string) => void }) {
     });
     const abridgedUrl = await shortenUrl({ original_url: finalUrl });
     if(abridgedUrl.success) {
-      handleUrl(abridgedUrl.shortenedUrl);
+      handleUrl(finalUrl, abridgedUrl.shortenedUrl);
     } else {
       toast.error("Failed to shorten URL", {
         description: abridgedUrl.message,
@@ -109,17 +109,19 @@ export function InputForm({ handleUrl }: { handleUrl: (url: string) => void }) {
 
 export default function App() {
   const [seekInput, setSeekInput] = useState(true);
-  const [url, setUrl] = useState("");
+  const [originalUrl, setOriginalUrl] = useState("");
+  const [shortenedUrl, setShortenedUrl] = useState("");
 
-  const handleUrl = (url: string) => {
-    console.log("URL: ", url);
-    setUrl(url);
+  const handleUrl = (originalUrl: string, shortenedUrl: string) => {
+    console.log("URL: ", originalUrl);
+    setOriginalUrl(originalUrl);
+    setShortenedUrl(shortenedUrl);
     setSeekInput(false);
   }
 
   return (
     <div className="p-5">
-      {seekInput ? <InputForm handleUrl={handleUrl} /> : <Displayer url={url} />}
+      {seekInput ? <InputForm handleUrl={handleUrl} /> : <Displayer originalUrl={originalUrl} shortenedUrl={shortenedUrl} />}
     </div>
   )
 }
