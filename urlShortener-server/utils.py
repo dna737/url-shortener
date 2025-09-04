@@ -47,7 +47,7 @@ def is_valid_url(url_string):
     Accepts domains with or without protocol (http, https) and www.
     """
     domain_regex = re.compile(
-        r"^(?:https?://)?(?:www\.)?[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$",
+        r"^(?:https?://)?(?:www\.)?[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}(?:\/[^\s]*)?$",
         re.IGNORECASE,
     )
 

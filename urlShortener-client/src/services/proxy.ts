@@ -17,7 +17,9 @@ const requests = {
 };
 
 export const get = async (url: string) => {
-  const response = await fetch(BASE_URL + url);
+  const response = await fetch(BASE_URL + url, {
+    redirect: "manual",
+  });
   return response.json();
 };
 
@@ -39,5 +41,8 @@ export const shortenUrl = async (data: UrlRequest): Promise<UrlResponse> => {
 };
 
 export const redirectUrl = async (url: string) => {
-  return get(requests.redirect + url);
+  const response = await fetch(BASE_URL + requests.redirect + url);
+  const data = await response.json();
+  
+  return data;
 };
