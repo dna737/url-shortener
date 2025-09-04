@@ -17,7 +17,7 @@ export default function UrlRedirect() {
 
     const timeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 2500);
 
     const redirect = async () => {
       const response = await redirectUrl(url);
@@ -36,10 +36,12 @@ export default function UrlRedirect() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      {isLoading && <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600">
-        
-      </div>}
-      {!isLoading && <p className="mt-4 text-lg text-gray-600">Redirecting...</p>}
+      {isLoading && (
+        <>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600" />
+          <p className="mt-4 text-lg text-gray-600">Redirecting...</p>
+        </>
+      )}
     </div>
   );
 }
