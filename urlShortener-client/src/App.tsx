@@ -9,23 +9,28 @@ import { shortenUrl } from "@/services"
 import { toast, Toaster } from "sonner"
 import { isDomainValid } from "@/utils"
 import { useState } from "react"
-import { Displayer } from "."
+// import { Displayer } from "."
 
 const FormSchema = z.object({
   original_url: z.string({ message: "Invalid URL provided" })
     .refine((url) => {
       return isDomainValid(url);
     }, {
-      message: "URL must be a real domain (e.g., example.com)",
-    })
+      message: "Invalid URL provided",
+    }),
+  shortened_url: z.string().optional()
 });
 
-export function InputForm({ handleUrl }: { handleUrl: (originalUrl: string, shortenedUrl: string) => void }) {
+export function InputForm( props : { handleUrl: (originalUrl: string, shortenedUrl: string) => void; shortenedUrl: string | undefined }) {
+  const { handleUrl, shortenedUrl } = props;
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       original_url: "",
+      shortened_url: "",
     },
+    disabled: !!shortenedUrl,
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -94,14 +99,27 @@ export function InputForm({ handleUrl }: { handleUrl: (originalUrl: string, shor
                   />
                 </div>
               </FormControl>
-              <FormDescription>
+              {!shortenedUrl && <FormDescription>
                 This is the URL you want to shorten.
-              </FormDescription>
+              </FormDescription>}
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+
+        {shortenedUrl && <FormField
+          control={form.control}
+          name="shortened_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Shortened URL</FormLabel>
+              <FormControl>
+                <Input {...field} value={shortenedUrl} />
+              </FormControl>
+            </FormItem>
+          )}
+        />}
+        {!shortenedUrl && <Button type="submit">Submit</Button>}
       </form>
     </Form>
   )
@@ -121,7 +139,8 @@ export default function App() {
 
   return (
     <div className="p-5">
-      {seekInput ? <InputForm handleUrl={handleUrl} /> : <Displayer originalUrl={originalUrl} shortenedUrl={shortenedUrl} />}
+      <InputForm handleUrl={handleUrl} shortenedUrl={shortenedUrl} />
+      {/* {!seekInput && <Displayer originalUrl={originalUrl} shortenedUrl={shortenedUrl} />} */}
     </div>
   )
 }
