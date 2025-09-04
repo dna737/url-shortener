@@ -9,6 +9,8 @@ import { shortenUrl } from "@/services"
 import { toast, Toaster } from "sonner"
 import { isDomainValid } from "@/utils"
 import { useState } from "react"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { CopyButton } from "./components/ui/shadcn-io/copy-button"
 // import { Displayer } from "."
 
 const FormSchema = z.object({
@@ -82,12 +84,12 @@ export function InputForm( props : { handleUrl: (originalUrl: string, shortenedU
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="w-2/3 space-y-6" autoComplete="off">
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="w-full space-y-6" autoComplete="off">
         <FormField
           control={form.control}
           name="original_url"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="w-full">
               <FormLabel>Original URL</FormLabel>
               <FormControl>
                 <div>
@@ -135,7 +137,14 @@ export default function App() {
 
   return (
     <div className="p-5">
-      <InputForm handleUrl={handleUrl} shortenedUrl={shortenedUrl} />
+      <Card className="w-full max-w-sm">
+        <CardContent>
+          <InputForm handleUrl={handleUrl} shortenedUrl={shortenedUrl} />
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <CopyButton content={shortenedUrl} variant="outline" />
+        </CardFooter>
+      </Card>
       {/* {!seekInput && <Displayer originalUrl={originalUrl} shortenedUrl={shortenedUrl} />} */}
     </div>
   )
