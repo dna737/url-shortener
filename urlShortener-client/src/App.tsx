@@ -126,15 +126,11 @@ export function InputForm( props : { handleUrl: (originalUrl: string, shortenedU
 }
 
 export default function App() {
-  const [seekInput, setSeekInput] = useState(true);
-  const [originalUrl, setOriginalUrl] = useState("");
   const [shortenedUrl, setShortenedUrl] = useState("");
 
   const handleUrl = (originalUrl: string, shortenedUrl: string) => {
     console.log("URL: ", originalUrl);
-    setOriginalUrl(originalUrl);
     setShortenedUrl(shortenedUrl);
-    setSeekInput(false);
   }
 
   return (
