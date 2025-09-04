@@ -10,8 +10,7 @@ import { toast, Toaster } from "sonner"
 import { isDomainValid } from "@/utils"
 import { useState } from "react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { CopyButton } from "./components/ui/shadcn-io/copy-button"
-// import { Displayer } from "."
+import { ActionButtons } from "./components"
 
 const FormSchema = z.object({
   original_url: z.string({ message: "Invalid URL provided" })
@@ -141,11 +140,12 @@ export default function App() {
         <CardContent>
           <InputForm handleUrl={handleUrl} shortenedUrl={shortenedUrl} />
         </CardContent>
-        <CardFooter className="flex justify-end">
-          <CopyButton content={shortenedUrl} variant="outline" />
-        </CardFooter>
+        {shortenedUrl && (
+          <CardFooter className="flex justify-end">
+            <ActionButtons shortenedUrl={shortenedUrl} />
+          </CardFooter>
+        )}
       </Card>
-      {/* {!seekInput && <Displayer originalUrl={originalUrl} shortenedUrl={shortenedUrl} />} */}
     </div>
   )
 }
