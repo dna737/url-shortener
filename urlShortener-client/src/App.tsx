@@ -134,6 +134,10 @@ export default function App() {
     setShortenedUrl(shortenedUrl);
   }
 
+  const handleReset = () => {
+    setShortenedUrl("");
+  }
+
   return (
     <div className="p-5">
       <Card className="w-full max-w-sm">
@@ -142,7 +146,7 @@ export default function App() {
         </CardContent>
         {shortenedUrl && (
           <CardFooter className="flex justify-end">
-            <ActionButtons shortenedUrl={shortenedUrl} />
+            <ActionButtons shortenedUrl={shortenedUrl} handleReset={handleReset} />
           </CardFooter>
         )}
       </Card>
