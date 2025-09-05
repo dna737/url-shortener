@@ -11,6 +11,7 @@ import { isDomainValid } from "@/utils"
 import { useState } from "react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ActionButtons } from "./components"
+import { backgroundSvg } from "./assets"
 
 const FormSchema = z.object({
   original_url: z.string({ message: "Invalid URL provided" })
@@ -139,7 +140,7 @@ export default function App() {
   }
 
   return (
-    <div className="p-5">
+    <div className="p-5" style={{ backgroundImage: `url(${backgroundSvg})` }}>
       <Card className="w-full max-w-sm">
         <CardContent>
           <InputForm handleUrl={handleUrl} shortenedUrl={shortenedUrl} />
