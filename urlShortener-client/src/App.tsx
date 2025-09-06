@@ -140,7 +140,12 @@ export default function App() {
   }
 
   return (
-    <div className="p-5" style={{ backgroundImage: `url(${backgroundSvg})` }}>
+    <div className="p-5 h-full" style={{ 
+      backgroundImage: `url(${backgroundSvg})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center'
+    }}>
       <Card className="w-full max-w-sm">
         <CardContent>
           <InputForm handleUrl={handleUrl} shortenedUrl={shortenedUrl} />
