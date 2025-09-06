@@ -8,6 +8,7 @@ def random_url():
 
 
 class URLShortenerUser(HttpUser):
+    host = "http://localhost:5000"
     wait_time = between(1, 3)
 
     @task(1)
@@ -17,5 +18,5 @@ class URLShortenerUser(HttpUser):
     @task(9)
     def redirect_short_url(self):
         # Use some hardcoded or pre-generated short codes that exist in your SQLite DB
-        short_code = "abc123"
+        short_code = "aaaaaf"
         self.client.get(f"/api/{short_code}")
