@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import { App } from ".";
-import NotFound from "./components/NotFound";
-import UrlRedirect from "./components/UrlRedirect";
+import { NotFound, UrlRedirect } from "./components";
 
 export const router = createBrowserRouter([
   {

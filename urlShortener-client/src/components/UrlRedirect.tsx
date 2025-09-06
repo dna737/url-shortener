@@ -1,11 +1,13 @@
 import { redirectUrl } from '@/services/proxy';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
+import NotFound from './NotFound';
 
 export default function UrlRedirect() {
   const { url } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [showNotFound, setShowNotFound] = useState(false);
 
   console.log("URL: ", url);
 
@@ -23,8 +25,16 @@ export default function UrlRedirect() {
       const response = await redirectUrl(url);
       if (response.success) {
         window.location.href = response.originalUrl;
-      } else {
-        navigate('/');
+      } else if (response.error) {
+        // Check specifically for 404 status code
+        if (response.status === 404) {
+          setShowNotFound(true);
+        } else {
+          // Handle other error status codes
+          console.error('Redirect error:', response.status, response.message);
+          setShowNotFound(true); // You might want different handling for other errors
+        }
+        setIsLoading(false);
       }
     }
 
@@ -33,6 +43,10 @@ export default function UrlRedirect() {
     return () => clearTimeout(timeout);
     
   }, [url, navigate]);
+
+  if (showNotFound) {
+    return <NotFound />;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
