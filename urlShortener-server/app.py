@@ -2,9 +2,11 @@ from flask import Flask, request, redirect, jsonify
 from utils import is_valid_url, to_base62, from_base62
 from db import init_db, get_or_create_url_id, get_original_url
 
+# Create the Flask app instance
 app = Flask(__name__)
 
-init_db()
+# Initialize the database with the app instance
+init_db(app)
 
 
 @app.route("/api/shorten", methods=["POST"])

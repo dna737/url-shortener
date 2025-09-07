@@ -1,21 +1,40 @@
-import sqlite3
+import os
+from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 
+# Load environment variables from the .env file
+load_dotenv()
 
-def init_db():
-    """Initializes the SQLite database and creates the urls table."""
+# Global db instance - will be initialized with app instance
+db = None
+
+def init_db(app_instance):
+    """Initializes the database and creates tables."""
+    global db
+    
+    # Configure the database
+    app_instance.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    app_instance.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    # Initialize SQLAlchemy with the app instance
+    db = SQLAlchemy(app_instance)
+    
+    # Create the model class dynamically after db is initialized
+    class ShortenedUrl(db.Model):
+        __tablename__ = 'original_urls'  # Use the exact table name from Neon
+        id = db.Column(db.Integer, primary_key=True)
+        original_url = db.Column(db.String(2048), unique=True, nullable=False)
+
+        def __repr__(self):
+            return f'<ShortenedUrl {self.original_url}>'
+    
+    # Store the model class globally so other functions can access it
+    globals()['ShortenedUrl'] = ShortenedUrl
+    
     print("Initializing database...")
-    conn = sqlite3.connect("urls.db")
-    c = conn.cursor()
-    c.execute(
-        """
-        CREATE TABLE IF NOT EXISTS urls (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            original_url TEXT NOT NULL UNIQUE
-        )
-    """
-    )
-    conn.commit()
-    conn.close()
+    with app_instance.app_context():
+        db.create_all()
+        print("Database tables created successfully!")
 
 
 def get_or_create_url_id(long_url):
@@ -24,33 +43,31 @@ def get_or_create_url_id(long_url):
     If it does, returns its ID.
     If it doesn't, inserts it and returns the new ID.
     """
-    conn = sqlite3.connect("urls.db")
-    c = conn.cursor()
-
-    # Step 1: Check if the URL already exists
-    c.execute("SELECT id FROM urls WHERE long_url = ?", (long_url,))
-    result = c.fetchone()
-
-    if result:
-        # The URL was found, so return its ID
-        url_id = result[0]
-    else:
-        # The URL was not found, so insert it
-        c.execute("INSERT INTO urls (long_url) VALUES (?)", (long_url,))
-
-        # Get the ID of the new row
-        url_id = c.lastrowid
-        conn.commit()
-
-    conn.close()
-    return url_id
+    # We need to get the app instance from Flask's current_app
+    from flask import current_app
+    with current_app.app_context():
+        # Step 1: Check if the URL already exists
+        existing_url = ShortenedUrl.query.filter_by(original_url=long_url).first()
+        
+        if existing_url:
+            # The URL was found, so return its ID
+            return existing_url.id
+        else:
+            # The URL was not found, so insert it
+            new_url = ShortenedUrl(original_url=long_url)
+            db.session.add(new_url)
+            db.session.commit()
+            return new_url.id
 
 
 def get_original_url(id):
     """
     Retrieves the original URL from the database.
     """
-    conn = sqlite3.connect("urls.db")
-    c = conn.cursor()
-    c.execute("SELECT long_url FROM urls WHERE id = ?", (id,))
-    return c.fetchone()[0]
+    # We need to get the app instance from Flask's current_app
+    from flask import current_app
+    with current_app.app_context():
+        url_record = ShortenedUrl.query.get(id)
+        if url_record:
+            return url_record.original_url
+        return None
