@@ -10,7 +10,7 @@ def init_db():
         """
         CREATE TABLE IF NOT EXISTS urls (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            long_url TEXT NOT NULL UNIQUE
+            original_url TEXT NOT NULL UNIQUE
         )
     """
     )
