@@ -38,20 +38,30 @@ def shorten_url():
         400,
     )
 
+
+@app.route("/api/<short_url>")
 @app.route("/api/<short_url>")
 def get_original_url_api(short_url):
     try:
-        if not short_url:
-            return (
-                jsonify({"success": False, "error": "Invalid short URL", "message": "Invalid short URL"}),
-                400,
-            )
         url_id = from_base62(short_url)
         original_url = get_original_url(url_id)
+
         if original_url:
             return jsonify(
                 {"success": True, "originalUrl": original_url, "message": "URL found"}
             )
+        else:  # Handle the case where the URL is not found
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "URL not found",
+                        "message": "URL not found",
+                    }
+                ),
+                404,
+            )
+
     except Exception as e:
         return (
             jsonify(
