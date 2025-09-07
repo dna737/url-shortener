@@ -1,9 +1,11 @@
 from flask import Flask, request, redirect, jsonify
 from utils import is_valid_url, to_base62, from_base62
 from db import init_db, get_or_create_url_id, get_original_url
+from flask_cors import CORS
 
 # Create the Flask app instance
 app = Flask(__name__)
+CORS(app)
 
 # Initialize the database with the app instance
 init_db(app)
