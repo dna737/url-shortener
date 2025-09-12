@@ -1,6 +1,7 @@
 import type { UrlRequest, UrlResponse } from ".";
 
-const BASE_URL = "";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5000";
+console.log("import.meta.env.VITE_BACKEND_URL ", import.meta.env.VITE_BACKEND_URL);
 
 // Get the current host and port dynamically
 const getCurrentHost = () => {
@@ -17,14 +18,14 @@ const requests = {
 };
 
 export const get = async (url: string) => {
-  const response = await fetch(BASE_URL + url, {
+  const response = await fetch(BACKEND_URL + url, {
     redirect: "manual",
   });
   return response.json();
 };
 
 export const post = async (url: string, data: UrlRequest) => {
-  const response = await fetch(BASE_URL + url, {
+  const response = await fetch(BACKEND_URL + url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +42,7 @@ export const shortenUrl = async (data: UrlRequest): Promise<UrlResponse> => {
 };
 
 export const redirectUrl = async (url: string) => {
-  const response = await fetch(BASE_URL + requests.redirect + url);
+  const response = await fetch(BACKEND_URL + requests.redirect + url);
   const data = await response.json();
   
   return data;

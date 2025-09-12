@@ -2,7 +2,7 @@ import { CopyButton } from "./ui/shadcn-io/copy-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { IconLinkPlus } from '@tabler/icons-react';
 import { Button } from "./ui/button";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 
 export default function ActionButtons(props: { shortenedUrl: string, handleReset: () => void }) {
   const { shortenedUrl, handleReset } = props;
