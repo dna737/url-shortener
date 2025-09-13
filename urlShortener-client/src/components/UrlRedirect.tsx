@@ -9,8 +9,6 @@ export default function UrlRedirect() {
   const [isLoading, setIsLoading] = useState(true);
   const [showNotFound, setShowNotFound] = useState(false);
 
-  console.log("URL: ", url);
-
   useEffect(() => {
     if (!url) {
       navigate('/');

@@ -1,7 +1,6 @@
 import type { UrlRequest, UrlResponse } from ".";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5000";
-console.log("import.meta.env.VITE_BACKEND_URL ", import.meta.env.VITE_BACKEND_URL);
 
 // Get the current host and port dynamically
 const getCurrentHost = () => {

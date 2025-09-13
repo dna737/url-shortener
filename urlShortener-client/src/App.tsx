@@ -23,7 +23,7 @@ const FormSchema = z.object({
   shortened_url: z.string().optional()
 });
 
-export function InputForm( props : { handleUrl: (originalUrl: string, shortenedUrl: string) => void; shortenedUrl: string | undefined }) {
+export function InputForm( props : { handleUrl: (shortenedUrl: string) => void; shortenedUrl: string | undefined }) {
   const { handleUrl, shortenedUrl } = props;
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -55,7 +55,7 @@ export function InputForm( props : { handleUrl: (originalUrl: string, shortenedU
     });
     const abridgedUrl = await shortenUrl({ original_url: finalUrl });
     if(abridgedUrl.success) {
-      handleUrl(finalUrl, abridgedUrl.shortenedUrl);
+      handleUrl(abridgedUrl.shortenedUrl);
     } else {
       toast.error("Failed to shorten URL", {
         description: abridgedUrl.message,
@@ -130,8 +130,7 @@ export function InputForm( props : { handleUrl: (originalUrl: string, shortenedU
 export default function App() {
   const [shortenedUrl, setShortenedUrl] = useState("");
 
-  const handleUrl = (originalUrl: string, shortenedUrl: string) => {
-    console.log("URL: ", originalUrl);
+  const handleUrl = (shortenedUrl: string) => {
     setShortenedUrl(shortenedUrl);
   }
 
