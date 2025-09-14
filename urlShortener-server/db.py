@@ -2,6 +2,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from sqlalchemy.exc import OperationalError
+import time
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -91,4 +92,19 @@ def get_original_url(id):
         url_record = ShortenedUrl.query.get(id)
         if url_record:
             return url_record.original_url
+        return None
+
+def get_url_details(id):
+    """
+    Retrieves the URL details from the database.
+    """
+    # We need to get the app instance from Flask's current_app
+    from flask import current_app
+    with current_app.app_context():
+        url_record = ShortenedUrl.query.get(id)
+        if url_record:
+            return {
+                'id': url_record.id,
+                'original_url': url_record.original_url
+            }
         return None
