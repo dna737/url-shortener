@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, jsonify
 from utils import is_valid_url, to_base62, from_base62
-from db import init_db, get_or_create_url_id, get_original_url
+from db import init_db, get_or_create_url_id, get_original_url, get_url_details
 from flask_cors import CORS
 
 # Create the Flask app instance
@@ -51,6 +51,51 @@ def get_original_url_api(short_url):
                 {"success": True, "originalUrl": original_url, "message": "URL found"}
             )
         else:  # Handle the case where the URL is not found
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "URL not found",
+                        "message": "URL not found",
+                    }
+                ),
+                404,
+            )
+
+    except Exception as e:
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": str(e),
+                    "message": "Invalid short URL format",
+                }
+            ),
+            404,
+        )
+
+
+@app.route("/api/details/<short_url>")
+def get_url_details_api(short_url):
+    try:
+        url_id = from_base62(short_url)
+        url_details = get_url_details(url_id)
+
+        if url_details:
+            host = request.headers.get("X-Forwarded-Host", request.host)
+            short_url_full = f"{host}/{short_url}"
+            
+            return jsonify(
+                {
+                    "success": True,
+                    "message": "URL details retrieved successfully",
+                    "data": {
+                        "originalUrl": url_details['original_url'],
+                        "shortUrl": short_url_full
+                    }
+                }
+            )
+        else:
             return (
                 jsonify(
                     {
