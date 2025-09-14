@@ -2,14 +2,19 @@ import { redirectUrl } from '@/services/proxy';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import NotFound from './NotFound';
+import { useAppContext } from '@/context/useAppContext';
+import { Preview } from '.';
 
 export default function UrlRedirect() {
   const { url } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [showNotFound, setShowNotFound] = useState(false);
+  const { canShowPreview } = useAppContext();
 
   useEffect(() => {
+    if (canShowPreview) return;
+
     if (!url) {
       navigate('/');
       return;
@@ -40,10 +45,14 @@ export default function UrlRedirect() {
 
     return () => clearTimeout(timeout);
     
-  }, [url, navigate]);
+  }, [url, navigate, canShowPreview]);
 
   if (showNotFound) {
     return <NotFound />;
+  }
+
+  if (canShowPreview) {
+    return <Preview url={url} />;
   }
 
   return (

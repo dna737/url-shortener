@@ -1,4 +1,4 @@
-import type { UrlRequest, UrlResponse } from ".";
+import type { UrlRequest, UrlResponse, PageDetailsResponse } from ".";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5000";
 
@@ -14,6 +14,7 @@ const getCurrentHost = () => {
 const requests = {
   shorten: "/api/shorten",
   redirect: "/api/",
+  details: "/api/details/",
 };
 
 export const get = async (url: string) => {
@@ -42,6 +43,13 @@ export const shortenUrl = async (data: UrlRequest): Promise<UrlResponse> => {
 
 export const redirectUrl = async (url: string) => {
   const response = await fetch(BACKEND_URL + requests.redirect + url);
+  const data = await response.json();
+  
+  return data;
+};
+
+export const getPageDetails = async (shortUrl: string): Promise<PageDetailsResponse> => {
+  const response = await fetch(BACKEND_URL + requests.details + shortUrl);
   const data = await response.json();
   
   return data;

@@ -8,3 +8,14 @@ export interface UrlResponse {
   success: boolean;
   message: string;
 }
+
+export interface PageDetailsResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    id: number;
+    originalUrl: string;
+    shortUrl: string;
+    createdAt?: string;
+  };
+}
