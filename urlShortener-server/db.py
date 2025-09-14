@@ -1,6 +1,7 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from sqlalchemy.exc import OperationalError
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -47,13 +48,14 @@ def retry_db_operation(func):
             try:
                 return func(*args, **kwargs)
             except OperationalError as e:
-                print(f"Database connection failed. Attempt {i+1} of {retries}. Retrying in {delay}s...")
+                print(
+                    f"Database connection failed. Attempt {i+1} of {retries}. Retrying in {delay}s..."
+                )
                 time.sleep(delay)
                 delay *= 2  # Exponential backoff
         # If all retries fail, re-raise the exception
         raise e
     return wrapper
-
 
 @retry_db_operation
 def get_or_create_url_id(long_url):
