@@ -36,7 +36,26 @@ def init_db(app_instance):
         db.create_all()
         print("Database tables created successfully!")
 
+def retry_db_operation(func):
+    """
+    Decorator to handle OperationalError by retrying the database operation.
+    """
+    def wrapper(*args, **kwargs):
+        retries = 3
+        delay = 1  # seconds
+        for i in range(retries):
+            try:
+                return func(*args, **kwargs)
+            except OperationalError as e:
+                print(f"Database connection failed. Attempt {i+1} of {retries}. Retrying in {delay}s...")
+                time.sleep(delay)
+                delay *= 2  # Exponential backoff
+        # If all retries fail, re-raise the exception
+        raise e
+    return wrapper
 
+
+@retry_db_operation
 def get_or_create_url_id(long_url):
     """
     Checks if a URL exists in the database.
