@@ -101,6 +101,21 @@ export default function Preview(props: PreviewProps) {
               <h2 className="text-lg font-semibold text-gray-700 mb-2">Original URL</h2>
               <p className="text-green-600 break-all">{pageDetails.data.originalUrl}</p>
             </div>
+
+            <div className="border-t pt-4">
+              <h2 className="text-lg font-semibold text-gray-700 mb-2">Statistics</h2>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Total Accesses:</span>
+                  <span className="text-2xl font-bold text-blue-600">{pageDetails.data.accessCount || 0}</span>
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  This URL has been accessed {(pageDetails.data.accessCount || 0) + " "} 
+                  time{(pageDetails.data.accessCount || 0) !== 1 ? 's' : ''} by users.
+                </p>
+              </div>
+            </div>
+
             <div className={cn("m-auto w-full flex justify-center")}>
             <Button onClick={handleRedirect} className="hover:cursor-pointer">{"Visit URL"}</Button>
             </div>

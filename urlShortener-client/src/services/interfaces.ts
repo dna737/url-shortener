@@ -16,6 +16,17 @@ export interface PageDetailsResponse {
     id: number;
     originalUrl: string;
     shortUrl: string;
+    accessCount: number;
     createdAt?: string;
+  };
+}
+
+export interface UrlStatsResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    originalUrl: string;
+    shortUrl: string;
+    accessCount: number;
   };
 }
