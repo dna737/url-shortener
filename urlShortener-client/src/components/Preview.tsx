@@ -24,7 +24,16 @@ export default function Preview(props: PreviewProps) {
 
       try {
         setLoading(true);
-        const details = await getPageDetails(url);
+        
+        // Create a minimum delay promise
+        const minDelay = new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Fetch page details and wait for both to complete
+        const [details] = await Promise.all([
+          getPageDetails(url),
+          minDelay
+        ]);
+        
         setPageDetails(details);
         if (!details.success) {
           setError(details.message || 'Failed to fetch page details');
@@ -43,7 +52,7 @@ export default function Preview(props: PreviewProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
+        <div className="text-center bg-amber-50 rounded-lg p-5">
           <h1 className="text-2xl font-bold mb-4">Loading Page Details...</h1>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
         </div>
@@ -78,11 +87,10 @@ export default function Preview(props: PreviewProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
+    <div className="min-h-screen w-full p-5">
+      <div className="max-w-2xl mx-auto px-4 w-full">
         <div className="bg-white rounded-lg p-6 border-1">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Page Details</h1>
-          
           <div className="space-y-4 gap-y-4">
             <div className="border-b pb-4">
               <h2 className="text-lg font-semibold text-gray-700 mb-2">Short URL</h2>
@@ -93,7 +101,6 @@ export default function Preview(props: PreviewProps) {
               <h2 className="text-lg font-semibold text-gray-700 mb-2">Original URL</h2>
               <p className="text-green-600 break-all">{pageDetails.data.originalUrl}</p>
             </div>
-
             <div className={cn("m-auto w-full flex justify-center")}>
             <Button onClick={handleRedirect} className="hover:cursor-pointer">{"Visit URL"}</Button>
             </div>
