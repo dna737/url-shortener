@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getPageDetails } from '../services/proxy';
 import type { PageDetailsResponse } from '../services/interfaces';
+import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
 
 interface PreviewProps {
   url?: string;
@@ -71,21 +73,29 @@ export default function Preview(props: PreviewProps) {
     );
   }
 
+  const handleRedirect = () => {
+    window.location.href = pageDetails.data!.originalUrl;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg p-6">
+        <div className="bg-white rounded-lg p-6 border-1">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Page Details</h1>
           
-          <div className="space-y-4">
+          <div className="space-y-4 gap-y-4">
             <div className="border-b pb-4">
-              <h2 className="text-lg font-semibold text-gray-700 mb-2">Original URL</h2>
-              <p className="text-blue-600 break-all">{pageDetails.data.originalUrl}</p>
-            </div>
-            
-            <div>
               <h2 className="text-lg font-semibold text-gray-700 mb-2">Short URL</h2>
-              <p className="text-green-600 break-all">{pageDetails.data.shortUrl}</p>
+              <p className="text-blue-600 break-all">{pageDetails.data.shortUrl}</p>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold text-gray-700 mb-2">Original URL</h2>
+              <p className="text-green-600 break-all">{pageDetails.data.originalUrl}</p>
+            </div>
+
+            <div className={cn("m-auto w-full flex justify-center")}>
+            <Button onClick={handleRedirect} className="hover:cursor-pointer">{"Visit URL"}</Button>
             </div>
           </div>
         </div>
