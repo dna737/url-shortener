@@ -11,7 +11,6 @@ import { isDomainValid } from "@/utils"
 import { useState } from "react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ActionButtons } from "./components"
-import { backgroundSvg } from "./assets"
 
 const FormSchema = z.object({
   original_url: z.string({ message: "Invalid URL provided" })
